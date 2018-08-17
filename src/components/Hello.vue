@@ -41,7 +41,8 @@ export default {
       af_ar_mar: null,
       afe_name: '',
       afe_phone: '',
-      afe_markers: []
+      afe_markers: [],
+      afe_iwindows: []
     }
   },
   computed: {
@@ -51,8 +52,12 @@ export default {
   },
   watch: {
     afe () {
+      var re = []
       var res = []
       for (var i in this.afe) {
+        var infowindow = new window.google.maps.InfoWindow({
+          content: `<h3>${this.afe[i].name}</h3><p>${this.afe[i].phone}</p>`
+        })
         var marker = new window.google.maps.Marker({
           position: this.afe[i].latlng,
           map: this.map,
@@ -60,9 +65,14 @@ export default {
           animation: window.google.maps.Animation.DROP,
           title: 'Effected Person\'s Location'
         })
+        marker.addListener('click', () => {
+          infowindow.open(this.map, marker)
+        })
+        re.push(infowindow)
         res.push(marker)
       }
       this.afe_markers = res
+      this.afe_iwindows = re
     }
   },
   methods: {
@@ -136,6 +146,9 @@ export default {
         name: this.afe_name,
         phone: this.afe_phone
       })
+      this.af_e_mar.setVisible(false)
+      this.afe_name = ''
+      this.afe_phone = ''
     }
   },
   mounted () {
@@ -144,7 +157,7 @@ export default {
       zoom: 8
     })
     const stretchMap = () => {
-      const height = window.innerHeight
+      const height = window.innerWidth < 800 ? window.innerHeight * 0.55 : window.innerHeight
       const width = window.innerWidth
       const map = document.getElementById('map')
       map.style.height = height + 'px'
@@ -177,10 +190,10 @@ export default {
 }
 @media (max-width: 800px) {
   #panel {
-    height: 33%;
+    height: 45%;
+    width: unset;
     left: 0;
     top: unset;
-    width: 100%;
     overflow-y: auto;
   }
   h3 {
