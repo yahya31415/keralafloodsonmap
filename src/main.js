@@ -17,13 +17,17 @@ Vue.use(Vuetify)
 Vue.use(VueFire)
 
 const app = Firebase.initializeApp(Key.firebase)
+window.db = app.database()
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
   firebase: {
-    afe: app.database().ref('afe')
+    afe: app.database().ref('afe'),
+    boat: app.database().ref('boat'),
+    helpline: app.database().ref('helpline'),
+    rel_camps: app.database().ref('rel_camps')
   },
   template: '<App/>',
   components: { App }
